@@ -2,15 +2,19 @@
 // static/js/main.js
 // ===== WEDDING CONFIGURATION =====
 const WEDDING_CONFIG = {
-    weddingDate: new Date('2026-01-07T16:00:00'), // Ngày cưới 07/01/2026 16:00
-    currentAddress: 'old', // Mặc định hiển thị địa chỉ cũ
+    weddingDate: new Date('2026-01-07T16:00:00'),
+    currentAddress: 'old',
     photos: [
         'chinh.jpg',
         'anh1.jpg',
         'anh2.jpg',
         'anh3.jpg',
         'anh4.jpg',
-        'anh5.jpg'
+        'anh5.jpg',
+        'anh6.jpg',
+        'anh7.jpg',
+        'anh8.jpg',
+        'anh9.jpg'  // CHỈ 10 ẢNH, KHÔNG TRÙNG
     ]
 };
 
@@ -169,10 +173,6 @@ function initializeCalendar() {
     calendarBody.innerHTML = html;
     console.log('✅ Đã tạo lịch tháng 1/2026, ngày cưới được đánh dấu');
 }
-// ===== PHOTO ALBUM =====
-// ===== PHOTO ALBUM - ĐÃ CẬP NHẬT =====
-// ===== PHOTO ALBUM - HIỂN THỊ TOÀN BỘ ẢNH =====
-
 
 // ===== LAZY LOADING VỚI DETECTION ẢNH =====
 function initializeLazyLoading() {
@@ -525,10 +525,10 @@ function initializeMapFunctions() {
     
     console.log('✅ Map functions đã sẵn sàng');
 }
-// ===== CAROUSEL ALBUM - CHẠY NHƯ CUỐN BĂNG =====
-// ===== CAROUSEL ALBUM - HIỂN THỊ ĐẦY ĐỦ 10 ẢNH =====
 
 // ===== SIMPLE IMAGE SLIDER =====
+// ===== SIMPLE IMAGE SLIDER - CẢI THIỆN =====
+// ===== SIMPLE IMAGE SLIDER - CẢI THIỆN =====
 // ===== SIMPLE IMAGE SLIDER - CẢI THIỆN =====
 function initializePhotoAlbum() {
     console.log('🎞️ Khởi tạo album ảnh đơn giản...');
@@ -543,22 +543,36 @@ function initializePhotoAlbum() {
         return;
     }
     
-    // Lấy ảnh từ weddingData
-    const photos = window.weddingData?.photos || [
-        'chinh.jpg', 'anh1.jpg', 'anh2.jpg', 'anh3.jpg', 'anh4.jpg',
-        'anh5.jpg', 'anh6.jpg', 'anh7.jpg', 'anh8.jpg', 'anh9.jpg'
+    // SỬA QUAN TRỌNG: Lấy ảnh ĐÚNG theo thứ tự
+    const photos = [
+        'chinh.jpg',
+        'anh1.jpg',
+        'anh2.jpg', 
+        'anh3.jpg',
+        'anh4.jpg',
+        'anh5.jpg',
+        'anh6.jpg',
+        'anh7.jpg',
+        'anh8.jpg',
+        'anh9.jpg'
     ];
+    
+    // Kiểm tra console.log để debug
+    console.log('📸 Danh sách ảnh:', photos);
     
     // Cập nhật tổng số ảnh
     if (totalPhotosEl) {
         totalPhotosEl.textContent = photos.length;
     }
     
-    // Tạo slides với lazy loading
+    // Tạo slides với FIX cho ảnh không bị cắt
     let slidesHTML = '';
     photos.forEach((photo, index) => {
         const photoUrl = `/static/images/${photo}`;
         const fallbackUrl = `https://images.unsplash.com/photo-${1519669556878 + index}?ixlib=rb-4.0.3&auto=format&fit=contain&w=600&h=450&q=80`;
+        
+        // DEBUG: Log từng ảnh để kiểm tra
+        console.log(`Ảnh ${index + 1}: ${photo}`);
         
         slidesHTML += `
             <div class="carousel-slide ${index === 0 ? 'active' : ''}" data-index="${index}">
@@ -568,7 +582,8 @@ function initializePhotoAlbum() {
                          class="slide-image"
                          onerror="this.onerror=null; this.src='${fallbackUrl}';"
                          loading="lazy"
-                         style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                         onload="fixAlbumImageDisplay(this, ${index})"
+                         data-photo-index="${index}">
                     <div class="slide-number">${index + 1} / ${photos.length}</div>
                 </div>
             </div>
@@ -591,19 +606,20 @@ function initializePhotoAlbum() {
         carouselDots.innerHTML = dotsHTML;
     }
     
-    // Khởi tạo slider với các cải tiến
+    // Khởi tạo slider
     window.slider = {
         currentIndex: 0,
         totalSlides: photos.length,
         autoPlay: true,
-        interval: 4000,
+        interval: 15000,
         intervalId: null,
         slides: document.querySelectorAll('.carousel-slide'),
-        isAnimating: false
+        isAnimating: false,
+        isPaused: false
     };
     
-    // Preload ảnh đầu tiên
-    preloadImages();
+    // Áp dụng fix ngay lập tức
+    setTimeout(applyAlbumImageFix, 100);
     
     // Bắt đầu auto-play
     startSliderAutoPlay();
@@ -611,29 +627,380 @@ function initializePhotoAlbum() {
     console.log(`✅ Đã tạo slider với ${photos.length} ảnh`);
 }
 
+// ===== FIX HIỂN THỊ ẢNH ALBUM =====
+function fixAlbumImageDisplay(imgElement, index) {
+    if (!imgElement) return;
+    
+    console.log(`🖼️ Đang fix ảnh ${index + 1}:`, imgElement.src);
+    
+    // Đảm bảo ảnh hiển thị toàn bộ không bị cắt
+    imgElement.style.objectFit = 'contain';
+    imgElement.style.objectPosition = 'center center';
+    imgElement.style.maxWidth = '100%';
+    imgElement.style.maxHeight = '100%';
+    imgElement.style.width = 'auto';
+    imgElement.style.height = 'auto';
+    
+    // Thêm background nếu ảnh có khoảng trống
+    imgElement.style.backgroundColor = 'white';
+    
+    // Kiểm tra xem ảnh có load thành công không
+    if (imgElement.naturalWidth === 0) {
+        console.error(`❌ Ảnh ${index + 1} không tải được:`, imgElement.src);
+    } else {
+        console.log(`✅ Ảnh ${index + 1} đã tải: ${imgElement.naturalWidth}x${imgElement.naturalHeight}`);
+    }
+}
+
+// ===== ÁP DỤNG FIX CHO TẤT CẢ ẢNH TRONG ALBUM =====
+function applyAlbumImageFix() {
+    const images = document.querySelectorAll('.slide-image');
+    console.log(`🔍 Tìm thấy ${images.length} ảnh trong album`);
+    
+    images.forEach((img, index) => {
+        // Nếu ảnh đã load
+        if (img.complete) {
+            fixAlbumImageDisplay(img, index);
+        } else {
+            // Nếu chưa load, đợi load xong
+            img.addEventListener('load', function() {
+                fixAlbumImageDisplay(this, index);
+            });
+        }
+    });
+}
+
+// ===== FUNCTION FIX HIỂN THỊ ẢNH =====
+function fixImageDisplay(imgElement) {
+    if (!imgElement) return;
+    
+    // Đảm bảo ảnh hiển thị toàn bộ không bị cắt
+    imgElement.style.objectFit = 'contain';
+    imgElement.style.objectPosition = 'center center';
+    imgElement.style.maxWidth = '100%';
+    imgElement.style.maxHeight = '100%';
+    imgElement.style.width = 'auto';
+    imgElement.style.height = 'auto';
+    
+    // Thêm background nếu ảnh có khoảng trống
+    imgElement.style.backgroundColor = 'white';
+    
+    // Wrap trong container
+    const wrapper = imgElement.parentElement;
+    if (wrapper) {
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.width = '100%';
+        wrapper.style.height = '100%';
+        wrapper.style.overflow = 'hidden';
+    }
+    
+    console.log('🖼️ Đã fix hiển thị cho ảnh:', imgElement.src.split('/').pop());
+}
+
+// ===== ÁP DỤNG FIX CHO TẤT CẢ ẢNH =====
+function applyImageFix() {
+    const images = document.querySelectorAll('.slide-image');
+    
+    images.forEach(img => {
+        // Nếu ảnh đã load
+        if (img.complete) {
+            fixImageDisplay(img);
+        } else {
+            // Nếu chưa load, đợi load xong
+            img.onload = function() {
+                fixImageDisplay(this);
+            };
+        }
+    });
+    
+    // Fix container của carousel
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (carouselContainer) {
+        carouselContainer.style.overflow = 'hidden';
+    }
+    
+    console.log('✅ Đã áp dụng fix cho tất cả ảnh');
+}
+function stopSliderAutoPlay() {
+    const slider = window.slider;
+    
+    if (!slider) return;
+    
+    // Dừng hoàn toàn
+    slider.autoPlay = false;
+    slider.isPaused = true;
+    
+    // Xóa tất cả intervals
+    if (slider.intervalId) {
+        clearInterval(slider.intervalId);
+        slider.intervalId = null;
+    }
+    
+    // Cập nhật nút
+    const toggleBtn = document.getElementById('carousel-toggle');
+    if (toggleBtn) {
+        toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
+        toggleBtn.title = 'Bắt đầu slideshow';
+    }
+    
+    console.log('⏸️ Đã dừng slideshow hoàn toàn');
+}
+// ===== CẢI THIỆN ALBUM SLIDESHOW =====
+function enhanceAlbumSlideshow() {
+    console.log('🎞️ Cải thiện album slideshow...');
+    
+    const config = window.slider;
+    if (!config) return;
+    
+    // 1. Làm chậm tốc độ chuyển ảnh
+    config.interval = 10000; // Tăng lên 5 giây mỗi ảnh (thay vì 4 giây)
+    
+    // 2. Thêm hiệu ứng fade
+    const slides = document.querySelectorAll('.carousel-slide');
+    slides.forEach(slide => {
+        slide.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+    });
+    
+    // 3. Thêm hiệu ứng khi chuyển ảnh
+    config.beforeChange = function() {
+        const activeSlide = document.querySelector('.carousel-slide.active');
+        if (activeSlide) {
+            const img = activeSlide.querySelector('.slide-image');
+            if (img) {
+                img.style.transform = 'scale(0.98)';
+            }
+        }
+    };
+    
+    config.afterChange = function() {
+        const activeSlide = document.querySelector('.carousel-slide.active');
+        if (activeSlide) {
+            const img = activeSlide.querySelector('.slide-image');
+            if (img) {
+                img.style.transform = 'scale(1)';
+            }
+        }
+    };
+    
+    // 4. Tự động pause khi hover
+    const container = document.querySelector('.carousel-container');
+    if (container) {
+        container.addEventListener('mouseenter', function() {
+            if (config.autoPlay && config.intervalId) {
+                clearInterval(config.intervalId);
+                config.intervalId = null;
+                
+                // Thay đổi icon button
+                const toggleBtn = document.getElementById('carousel-toggle');
+                if (toggleBtn) {
+                    toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            }
+        });
+        
+        container.addEventListener('mouseleave', function() {
+            if (config.autoPlay && !config.intervalId) {
+                startSliderAutoPlay();
+                
+                // Thay đổi icon button
+                const toggleBtn = document.getElementById('carousel-toggle');
+                if (toggleBtn) {
+                    toggleBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                }
+            }
+        });
+    }
+    
+    // 5. Thêm thông tin cho ảnh
+    const photoTitles = [
+        "Khoảnh khắc đầu tiên",
+        "Nụ cười hạnh phúc",
+        "Đôi tay nắm chặt",
+        "Ánh mắt trao nhau",
+        "Vũ điệu tình yêu",
+        "Lời thề trăm năm",
+        "Bữa tiệc ấm cúng",
+        "Chia sẻ ngọt ngào",
+        "Lễ đường trang trọng",
+        "Khởi đầu mới"
+    ];
+    
+    // Thêm overlay thông tin
+    const slidesContainers = document.querySelectorAll('.slide-image-container');
+    slidesContainers.forEach((container, index) => {
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'slide-info';
+        infoDiv.innerHTML = `
+            <div class="photo-title">${photoTitles[index] || `Ảnh ${index + 1}`}</div>
+            <div class="photo-description">Khoảnh khắc đáng nhớ</div>
+        `;
+        container.appendChild(infoDiv);
+    });
+    
+    console.log('✅ Đã cải thiện album slideshow');
+}
+
+// Gọi hàm cải thiện sau khi album được khởi tạo
+setTimeout(enhanceAlbumSlideshow, 1000);
 // Hàm preload ảnh
 function preloadImages() {
     const photos = window.weddingData?.photos || [];
     photos.forEach((photo, index) => {
-        if (index < 3) { // Preload 3 ảnh đầu
+        if (index < 1) { // Preload 3 ảnh đầu
             const img = new Image();
             img.src = `/static/images/${photo}`;
         }
     });
 }
+// Thêm vào file main.js
+function fixAlbumImages() {
+    const carouselSlides = document.querySelectorAll('.carousel-slide');
+    
+    carouselSlides.forEach(slide => {
+        const image = slide.querySelector('.slide-image');
+        if (image) {
+            // Đảm bảo ảnh luôn dùng contain
+            image.style.objectFit = 'contain';
+            image.style.objectPosition = 'center center';
+            image.style.maxWidth = '100%';
+            image.style.maxHeight = '100%';
+            
+            // Thêm nền trắng cho ảnh không bị cắt
+            image.style.backgroundColor = 'white';
+            image.style.padding = '5px';
+            image.style.borderRadius = '5px';
+        }
+        
+        // Container padding để không sát viền
+        const container = slide.querySelector('.slide-image-container');
+        if (container) {
+            container.style.padding = '15px';
+        }
+    });
+    
+    // Fix carousel container
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (carouselContainer) {
+        carouselContainer.style.backgroundColor = '#000';
+        carouselContainer.style.overflow = 'hidden';
+    }
+}
 
+// Gọi hàm khi load và khi chuyển slide
+window.addEventListener('load', fixAlbumImages);
+
+// Nếu có hàm moveCarousel, thêm fix vào đó
+function moveCarousel(direction) {
+    // ... code hiện tại của bạn ...
+    
+    // Gọi fix images sau khi chuyển slide
+    setTimeout(fixAlbumImages, 100);
+}
+// Thêm vào main.js
+function equalizeFamilyColumns() {
+    console.log('Equalizing family columns...');
+    
+    const familyRows = document.querySelectorAll('.family-table-row');
+    
+    familyRows.forEach(row => {
+        const groomCol = row.querySelector('.groom-column');
+        const brideCol = row.querySelector('.bride-column');
+        
+        if (groomCol && brideCol) {
+            // Reset heights
+            groomCol.style.height = 'auto';
+            brideCol.style.height = 'auto';
+            
+            // Get heights
+            const groomHeight = groomCol.offsetHeight;
+            const brideHeight = brideCol.offsetHeight;
+            
+            // Set to max height
+            const maxHeight = Math.max(groomHeight, brideHeight);
+            
+            if (window.innerWidth > 576) { // Chỉ áp dụng trên tablet/desktop
+                groomCol.style.minHeight = maxHeight + 'px';
+                brideCol.style.minHeight = maxHeight + 'px';
+            }
+            
+            console.log(`Row heights - Groom: ${groomHeight}px, Bride: ${brideHeight}px, Max: ${maxHeight}px`);
+        }
+    });
+    
+    // Đảm bảo các card bên trong cũng bằng nhau
+    const memberCards = document.querySelectorAll('.family-member-card');
+    let maxCardHeight = 0;
+    
+    memberCards.forEach(card => {
+        card.style.height = 'auto';
+        const cardHeight = card.offsetHeight;
+        if (cardHeight > maxCardHeight) {
+            maxCardHeight = cardHeight;
+        }
+    });
+    
+    // Áp dụng chiều cao tối đa
+    memberCards.forEach(card => {
+        if (window.innerWidth > 576) {
+            card.style.minHeight = maxCardHeight + 'px';
+        }
+    });
+}
+
+// Gọi hàm khi load và resize
+window.addEventListener('load', function() {
+    setTimeout(equalizeFamilyColumns, 500);
+    setTimeout(equalizeFamilyColumns, 1000);
+});
+
+window.addEventListener('resize', equalizeFamilyColumns);
+
+// Observer để tự động cập nhật
+function setupFamilyObserver() {
+    const familySection = document.querySelector('.family-section');
+    if (!familySection) return;
+    
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                setTimeout(equalizeFamilyColumns, 100);
+            }
+        });
+    });
+    
+    observer.observe(familySection, {
+        childList: true,
+        attributes: true,
+        subtree: true
+    });
+}
+
+// Khởi tạo observer
+setupFamilyObserver();
 function startSliderAutoPlay() {
     const slider = window.slider;
     
-    if (slider.intervalId) {
-        clearInterval(slider.intervalId);
+    if (!slider || !slider.autoPlay) {
+        console.log('🚫 Slideshow không được phép chạy');
+        return;
     }
     
+    // Xóa interval cũ nếu có
+    if (slider.intervalId) {
+        clearInterval(slider.intervalId);
+        slider.intervalId = null;
+    }
+    
+    // Tạo interval mới
     slider.intervalId = setInterval(() => {
-        if (!slider.isAnimating) {
+        if (slider.autoPlay && !slider.isAnimating) {
             nextSlide();
         }
     }, slider.interval);
+    
+    console.log('🚀 Bắt đầu auto-play với interval:', slider.interval);
 }
 
 function nextSlide() {
@@ -684,6 +1051,12 @@ function updateSlider() {
         currentSlide.classList.add('active');
         currentSlide.style.opacity = '1';
         currentSlide.style.transform = 'scale(1)';
+        
+        // Apply fix cho ảnh trong slide hiện tại
+        const currentImage = currentSlide.querySelector('.slide-image');
+        if (currentImage) {
+            fixAlbumImageDisplay(currentImage, slider.currentIndex);
+        }
     }
     
     // Move track
@@ -703,6 +1076,9 @@ function updateSlider() {
     setTimeout(() => {
         slider.isAnimating = false;
     }, 600);
+    
+    // Debug current image
+    console.log(`🎯 Đang hiển thị ảnh ${slider.currentIndex + 1}`);
 }
 
 // Update global functions
@@ -718,22 +1094,45 @@ window.toggleCarousel = function() {
     const slider = window.slider;
     const toggleBtn = document.getElementById('carousel-toggle');
     
-    if (!toggleBtn) return;
+    if (!slider || !toggleBtn) {
+        console.error('❌ Không tìm thấy slider hoặc nút toggle');
+        return;
+    }
     
+    // Đảo trạng thái
     slider.autoPlay = !slider.autoPlay;
     
     if (slider.autoPlay) {
+        // BẮT ĐẦU slideshow
         toggleBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        toggleBtn.title = 'Dừng slideshow';
         startSliderAutoPlay();
         showToast('▶️ Tiếp tục slideshow');
+        console.log('▶️ Bắt đầu slideshow');
     } else {
+        // DỪNG slideshow
         toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
+        toggleBtn.title = 'Bắt đầu slideshow';
+        
+        // Xóa interval nếu tồn tại
         if (slider.intervalId) {
             clearInterval(slider.intervalId);
             slider.intervalId = null;
+            console.log('⏸️ Đã dừng interval slideshow');
         }
+        
+        // Đảm bảo không có interval nào đang chạy
+        if (slider.autoPlayInterval) {
+            clearInterval(slider.autoPlayInterval);
+            slider.autoPlayInterval = null;
+        }
+        
         showToast('⏸️ Tạm dừng slideshow');
+        console.log('⏸️ Dừng slideshow');
     }
+    
+    // Cập nhật trạng thái slider
+    window.slider = slider;
 };
 
 // ===== MAP FUNCTIONS =====
@@ -823,70 +1222,6 @@ window.switchAddress = function(type) {
     showToast(`📍 Đã chuyển sang địa chỉ ${type === 'old' ? 'cũ' : 'mới'}`);
 };
 // ===== CAROUSEL FUNCTIONS =====
-function startCarouselAutoPlay() {
-    const config = window.carouselConfig;
-    
-    // Dừng interval cũ nếu có
-    if (config.intervalId) {
-        clearInterval(config.intervalId);
-    }
-    
-    // Bắt đầu interval mới
-    config.intervalId = setInterval(() => {
-        moveCarousel(1);
-    }, config.interval);
-    
-    console.log(`🎬 Carousel auto-play started (${config.interval}ms interval)`);
-}
-
-function moveCarousel(direction) {
-    const config = window.carouselConfig;
-    const track = document.getElementById('carousel-track');
-    const currentPhotoEl = document.getElementById('current-photo');
-    const dots = document.querySelectorAll('.carousel-dot');
-    
-    if (!track || config.totalSlides === 0) {
-        console.error('❌ Không thể move carousel: track không tồn tại hoặc không có slides');
-        return;
-    }
-    
-    // Tính toán index mới
-    let newIndex = config.currentIndex + direction;
-    
-    // Xử lý infinite loop
-    if (newIndex >= config.totalSlides) {
-        newIndex = 0;
-    } else if (newIndex < 0) {
-        newIndex = config.totalSlides - 1;
-    }
-    
-    // Cập nhật index
-    config.currentIndex = newIndex;
-    
-    // Tính toán vị trí dịch chuyển
-    const translateX = -(config.currentIndex * config.slideWidth);
-    
-    // Áp dụng animation
-    track.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-    track.style.transform = `translateX(${translateX}px)`;
-    
-    // Cập nhật UI
-    if (currentPhotoEl) {
-        currentPhotoEl.textContent = config.currentIndex + 1;
-    }
-    
-    // Cập nhật dots
-    dots.forEach((dot, index) => {
-        if (index === config.currentIndex) {
-            dot.classList.add('active');
-        } else {
-            dot.classList.remove('active');
-        }
-    });
-    
-    // Debug
-    console.log(`➡️ Chuyển sang ảnh ${config.currentIndex + 1}/${config.totalSlides}`);
-}
 
 function goToSlide(index) {
     const config = window.carouselConfig;
@@ -925,66 +1260,6 @@ function goToSlide(index) {
     console.log(`🎯 Nhảy đến ảnh ${config.currentIndex + 1}/${config.totalSlides}`);
 }
 
-function toggleCarousel() {
-    const config = window.carouselConfig;
-    const toggleBtn = document.getElementById('carousel-toggle');
-    
-    if (!toggleBtn) return;
-    
-    config.autoPlay = !config.autoPlay;
-    
-    if (config.autoPlay) {
-        // Tiếp tục chạy
-        toggleBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        startCarouselAutoPlay();
-        console.log('▶️ Tiếp tục carousel');
-    } else {
-        // Dừng
-        toggleBtn.innerHTML = '<i class="fas fa-play"></i>';
-        if (config.intervalId) {
-            clearInterval(config.intervalId);
-            config.intervalId = null;
-        }
-        console.log('⏸️ Dừng carousel');
-    }
-}
-
-// ===== KIỂM TRA VÀ FIX LỖI =====
-function checkAndFixCarousel() {
-    console.log('🔧 Kiểm tra và fix carousel...');
-    
-    const track = document.getElementById('carousel-track');
-    const config = window.carouselConfig;
-    
-    if (!track) {
-        console.error('❌ Không tìm thấy carousel-track');
-        return;
-    }
-    
-    // Kiểm tra số lượng slides
-    const slides = track.querySelectorAll('.carousel-slide');
-    console.log(`📊 Tìm thấy ${slides.length} slides trong DOM`);
-    
-    if (slides.length === 0) {
-        console.error('❌ Không có slides nào được tạo');
-        console.log('🔄 Đang tạo lại slides...');
-        initializePhotoAlbum();
-        return;
-    }
-    
-    if (config && config.totalSlides !== slides.length) {
-        console.warn(`⚠️ Số slides không khớp: config=${config.totalSlides}, DOM=${slides.length}`);
-        config.totalSlides = slides.length;
-    }
-    
-    // Kiểm tra auto-play
-    if (config && config.autoPlay && !config.intervalId) {
-        console.log('🔄 Khởi động lại auto-play...');
-        startCarouselAutoPlay();
-    }
-    
-    console.log('✅ Kiểm tra hoàn tất');
-}
 
 // Gọi kiểm tra khi trang load
 window.addEventListener('load', function() {
@@ -1188,102 +1463,7 @@ document.addEventListener('keydown', function(e) {
         }
     }
 });
-// ===== CAROUSEL FUNCTIONS =====
-function initializeCarousel() {
-    const config = window.carouselConfig;
-    const track = document.getElementById('carousel-track');
-    const slides = document.querySelectorAll('.carousel-slide');
-    
-    if (!track || slides.length === 0) return;
-    
-    // Tính toán kích thước slide
-    const slideWidth = slides[0].offsetWidth + 20; // + gap
-    const middleIndex = Math.floor(slides.length / 3); // Lấy phần giữa của clones
-    
-    // Đặt vị trí ban đầu ở phần giữa
-    track.style.transform = `translateX(-${middleIndex * slideWidth}px)`;
-    config.currentIndex = 0;
-    
-    // Bắt đầu auto-play
-    startAutoPlay();
-    
-    // Thêm sự kiện click cho slides
-    slides.forEach(slide => {
-        slide.addEventListener('click', function() {
-            const index = parseInt(this.dataset.index);
-            goToSlide(index);
-        });
-    });
-}
-
-
-function updateCarouselUI() {
-    const config = window.carouselConfig;
-    const currentPhotoEl = document.getElementById('current-photo');
-    const dots = document.querySelectorAll('.carousel-dot');
-    
-    // Cập nhật số thứ tự
-    currentPhotoEl.textContent = config.currentIndex + 1;
-    
-    // Cập nhật dots
-    dots.forEach((dot, index) => {
-        if (index === config.currentIndex) {
-            dot.classList.add('active');
-        } else {
-            dot.classList.remove('active');
-        }
-    });
-}
-
-function startAutoPlay() {
-    const config = window.carouselConfig;
-    
-    if (config.autoPlay) {
-        clearInterval(config.intervalId);
-        config.intervalId = setInterval(() => {
-            moveCarousel(1);
-        }, config.interval);
-    }
-}
-
-
-
-function initializeCarouselLazyLoading() {
-    const images = document.querySelectorAll('.carousel-slide img');
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                if (img.dataset.src) {
-                    img.src = img.dataset.src;
-                    img.onload = () => {
-                        // Tự động điều chỉnh object-fit dựa trên tỷ lệ ảnh
-                        if (img.naturalWidth && img.naturalHeight) {
-                            const ratio = img.naturalWidth / img.naturalHeight;
-                            if (ratio > 1.2) {
-                                img.style.objectFit = 'contain';
-                                img.style.width = '100%';
-                                img.style.height = 'auto';
-                            } else if (ratio < 0.8) {
-                                img.style.objectFit = 'contain';
-                                img.style.height = '100%';
-                                img.style.width = 'auto';
-                            }
-                        }
-                    };
-                    observer.unobserve(img);
-                }
-            }
-        });
-    }, {
-        root: document.querySelector('.carousel-container'),
-        rootMargin: '50px',
-        threshold: 0.1
-    });
-    
-    images.forEach(img => observer.observe(img));
-}
+// ===== CAROUSEL FUNCTIONS ====
 
 // ===== LIGHTBOX FUNCTION =====
 
@@ -1594,3 +1774,175 @@ if (document.readyState === 'loading') {
 } else {
     console.log('📄 DOM đã sẵn sàng');
 }
+/* ===== FIX CÁC CỘT BẰNG NHAU ===== */
+
+function forceEqualColumns() {
+    console.log('Forcing equal columns...');
+    
+    // 1. Family section
+    const groomColumns = document.querySelectorAll('.groom-column');
+    const brideColumns = document.querySelectorAll('.bride-column');
+    
+    groomColumns.forEach(col => col.style.minHeight = '');
+    brideColumns.forEach(col => col.style.minHeight = '');
+    
+    groomColumns.forEach((groomCol, index) => {
+        const brideCol = brideColumns[index];
+        if (groomCol && brideCol) {
+            const groomHeight = groomCol.offsetHeight;
+            const brideHeight = brideCol.offsetHeight;
+            const maxHeight = Math.max(groomHeight, brideHeight);
+            
+            groomCol.style.minHeight = maxHeight + 'px';
+            brideCol.style.minHeight = maxHeight + 'px';
+        }
+    });
+    
+    // 2. Couple names
+    const groomName = document.querySelector('.name-card.groom');
+    const brideName = document.querySelector('.name-card.bride');
+    
+    if (groomName && brideName) {
+        const groomHeight = groomName.offsetHeight;
+        const brideHeight = brideName.offsetHeight;
+        const maxHeight = Math.max(groomHeight, brideHeight);
+        
+        groomName.style.minHeight = maxHeight + 'px';
+        brideName.style.minHeight = maxHeight + 'px';
+    }
+    
+    // 3. Couplet
+    const coupletLeft = document.querySelector('.couplet-column.left');
+    const coupletRight = document.querySelector('.couplet-column.right');
+    
+    if (coupletLeft && coupletRight) {
+        const leftHeight = coupletLeft.offsetHeight;
+        const rightHeight = coupletRight.offsetHeight;
+        const maxHeight = Math.max(leftHeight, rightHeight);
+        
+        coupletLeft.style.minHeight = maxHeight + 'px';
+        coupletRight.style.minHeight = maxHeight + 'px';
+    }
+}
+
+// Chạy khi load
+window.addEventListener('load', function() {
+    setTimeout(forceEqualColumns, 100);
+    setTimeout(forceEqualColumns, 300);
+    setTimeout(forceEqualColumns, 500);
+});
+
+window.addEventListener('resize', forceEqualColumns);
+// ===== FIX CÂN BẰNG FAMILY VÀ QR SECTIONS =====
+function fixEqualColumns() {
+    console.log('⚖️ Đang cân bằng các cột...');
+    
+    // 1. FIX FAMILY SECTION
+    const familyRows = document.querySelectorAll('.family-table-row:not(.header-row)');
+    
+    familyRows.forEach(row => {
+        const groomCol = row.querySelector('.groom-column');
+        const brideCol = row.querySelector('.bride-column');
+        
+        if (groomCol && brideCol) {
+            // Reset heights
+            groomCol.style.minHeight = 'auto';
+            brideCol.style.minHeight = 'auto';
+            
+            // Get actual heights
+            const groomHeight = groomCol.offsetHeight;
+            const brideHeight = brideCol.offsetHeight;
+            const maxHeight = Math.max(groomHeight, brideHeight);
+            
+            // Apply max height (chỉ trên desktop)
+            if (window.innerWidth > 768) {
+                groomCol.style.minHeight = maxHeight + 'px';
+                brideCol.style.minHeight = maxHeight + 'px';
+            }
+        }
+    });
+    
+    // 2. FIX QR SECTION
+    const qrCards = document.querySelectorAll('.qr-card');
+    if (qrCards.length >= 2) {
+        const groomCard = document.querySelector('.qr-card.groom');
+        const brideCard = document.querySelector('.qr-card.bride');
+        
+        if (groomCard && brideCard) {
+            // Reset heights
+            groomCard.style.minHeight = 'auto';
+            brideCard.style.minHeight = 'auto';
+            
+            // Get heights
+            const groomHeight = groomCard.offsetHeight;
+            const brideHeight = brideCard.offsetHeight;
+            const maxHeight = Math.max(groomHeight, brideHeight);
+            
+            // Apply max height
+            groomCard.style.minHeight = maxHeight + 'px';
+            brideCard.style.minHeight = maxHeight + 'px';
+        }
+    }
+    
+    // 3. FIX CÂU ĐỐI SECTION
+    const coupletColumns = document.querySelectorAll('.couplet-column');
+    if (coupletColumns.length >= 2) {
+        const leftCol = coupletColumns[0];
+        const rightCol = coupletColumns[1];
+        
+        if (leftCol && rightCol) {
+            const leftHeight = leftCol.offsetHeight;
+            const rightHeight = rightCol.offsetHeight;
+            const maxHeight = Math.max(leftHeight, rightHeight);
+            
+            leftCol.style.minHeight = maxHeight + 'px';
+            rightCol.style.minHeight = maxHeight + 'px';
+        }
+    }
+    
+    // 4. FIX TÊN CẶP ĐÔI
+    const nameCards = document.querySelectorAll('.name-card');
+    if (nameCards.length >= 2) {
+        const groomName = nameCards[0];
+        const brideName = nameCards[1];
+        
+        if (groomName && brideName) {
+            const groomHeight = groomName.offsetHeight;
+            const brideHeight = brideName.offsetHeight;
+            const maxHeight = Math.max(groomHeight, brideHeight);
+            
+            groomName.style.minHeight = maxHeight + 'px';
+            brideName.style.minHeight = maxHeight + 'px';
+        }
+    }
+}
+
+// Chạy khi load và resize
+window.addEventListener('load', function() {
+    setTimeout(fixEqualColumns, 100);
+    setTimeout(fixEqualColumns, 300);
+    setTimeout(fixEqualColumns, 500);
+});
+
+window.addEventListener('resize', fixEqualColumns);
+
+// Observer để tự động cập nhật khi content thay đổi
+function setupAutoEqualizer() {
+    const sections = document.querySelectorAll('.family-section, .qr-section, .couplet-container, .couple-names');
+    
+    sections.forEach(section => {
+        const observer = new MutationObserver(function() {
+            setTimeout(fixEqualColumns, 100);
+        });
+        
+        observer.observe(section, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            characterData: true
+        });
+    });
+}
+
+// Khởi tạo observer
+setTimeout(setupAutoEqualizer, 1000);

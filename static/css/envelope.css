@@ -36,8 +36,8 @@
 }
 
 .envelope {
-    width: 300px;
-    height: 200px;
+    width: 450px;
+    height: 300px;
     position: relative;
     transform-style: preserve-3d;
     animation: floatEnvelope 3s ease-in-out infinite;
@@ -83,33 +83,34 @@
 }
 
 .envelope-seal {
-    width: 100px;
-    height: 100px;
+    width: 150px;  /* TĂNG 50% */
+    height: 150px; /* TĂNG 50% */
     background: linear-gradient(135deg, #ffd700, #ff9800);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: 
-        0 10px 30px rgba(0, 0, 0, 0.3),
-        inset 0 0 20px rgba(255, 255, 255, 0.3),
-        0 0 0 5px #fff,
-        0 0 0 8px #ff9800;
+        0 15px 40px rgba(0, 0, 0, 0.4), /* TĂNG SHADOW */
+        inset 0 0 30px rgba(255, 255, 255, 0.4),
+        0 0 0 8px #fff,  /* TĂNG VIỀN */
+        0 0 0 12px #ff9800;
     position: relative;
     animation: sealPulse 2s ease-in-out infinite;
 }
-
 @keyframes sealPulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); }
 }
 
 .envelope-hi {
-    font-size: 3rem;
+    font-size: 4.5rem; /* TĂNG 50% */
     color: #d32f2f;
     font-family: 'Noto Serif SC', serif;
     font-weight: 900;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.4), /* TĂNG SHADOW */
+        0 0 15px rgba(255, 255, 255, 0.5);
     animation: hiGlow 2s ease-in-out infinite alternate;
 }
 
@@ -119,31 +120,41 @@
 }
 
 .envelope-title {
-    margin-top: 15px;
-    font-size: 1.8rem;
+    margin-top: 20px;
+    font-size: 2.7rem; /* TĂNG 50% */
     color: #ffd700;
     font-family: 'Dancing Script', cursive;
     font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    letter-spacing: 2px;
+    text-shadow: 
+        3px 3px 6px rgba(0, 0, 0, 0.4),
+        0 0 10px rgba(255, 215, 0, 0.3);
+    letter-spacing: 3px; /* TĂNG KHOẢNG CÁCH CHỮ */
 }
 
 .envelope-couple {
-    margin-top: 5px;
-    font-size: 1.2rem;
+    margin-top: 10px;
+    font-size: 1.8rem; /* TĂNG 50% */
     color: white;
     font-family: 'Great Vibes', cursive;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+    text-shadow: 
+        2px 2px 5px rgba(0, 0, 0, 0.4),
+        0 0 8px rgba(255, 255, 255, 0.3);
+    letter-spacing: 1px;
 }
 
 .envelope-instruction {
-    margin-top: 15px;
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+    margin-top: 20px;
+    font-size: 1.3rem; /* TĂNG */
+    color: rgba(255, 255, 255, 0.9);
     font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    padding: 8px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     animation: blink 2s ease-in-out infinite;
+    backdrop-filter: blur(5px);
 }
-
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.5; }
@@ -162,15 +173,16 @@
     position: absolute;
     width: 0;
     height: 0;
-    border-left: 150px solid transparent;
-    border-right: 150px solid transparent;
-    border-top: 100px solid #ff5252;
+    border-left: 225px solid transparent; /* TĂNG 50% */
+    border-right: 225px solid transparent; /* TĂNG 50% */
+    border-top: 150px solid #ff5252; /* TĂNG 50% */
     top: 0;
     left: 0;
     transform-origin: top;
     transform: rotateX(0deg);
     transition: transform 1s ease;
     z-index: 2;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
 }
 
 .envelope.opening .envelope-flap {
@@ -279,5 +291,69 @@
         border-left: 100px solid transparent;
         border-right: 100px solid transparent;
         border-top: 70px solid #ff5252;
+    }
+}
+/* Hiệu ứng nổi bật thêm */
+.envelope-front {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #d32f2f, #b71c1c, #8b0000);
+    border-radius: 15px; /* TĂNG BORDER-RADIUS */
+    transform: translateZ(1px);
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.5), /* TĂNG SHADOW */
+        inset 0 0 80px rgba(255, 255, 255, 0.15),
+        0 0 0 3px #ffd700,
+        0 0 0 6px rgba(255, 215, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Thêm hiệu ứng ánh sáng */
+.envelope-container::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 215, 0, 0.2) 0%,
+        transparent 70%
+    );
+    top: -50%;
+    left: -50%;
+    animation: lightRotate 10s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes lightRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Tăng kích thước floating hearts */
+.floating-hearts .heart {
+    font-size: 32px; /* TĂNG KÍCH THƯỚC TRÁI TIM */
+    opacity: 0.4;
+}
+
+/* Animation float nổi bật hơn */
+@keyframes floatEnvelope {
+    0%, 100% { 
+        transform: translateY(0) rotateX(0) scale(1); 
+    }
+    25% { 
+        transform: translateY(-15px) rotateX(5deg) scale(1.02); 
+    }
+    50% { 
+        transform: translateY(0) rotateX(0) scale(1); 
+    }
+    75% { 
+        transform: translateY(-10px) rotateX(-5deg) scale(1.01); 
     }
 }

@@ -60,7 +60,7 @@ def index():
             "anh5.jpg",
             "anh6.jpg",
             "anh7.jpg",
-            "anh8.jpg",
+            "anh9.jpg",
             "anh9.jpg"
         ]
     }

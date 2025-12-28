@@ -59,11 +59,81 @@
                 <div class="subtitle">Hôn lễ thành hôn</div>
             </header>
 
+            <!-- Phần Câu Đối Thư Pháp -->
+            <div class="couplet-container">
+                <!-- Thanh phân cách -->
+                <div class="couplet-divider"></div>
+    
+                <!-- Câu đối bên trái -->
+                <div class="couplet-column left">
+                    <div class="couplet-text">
+                        <span>Trầu </span>
+                        <span>cau</span>
+                        <span>se</span>
+                        <span>mối</span>
+                    </div>
+                </div>
+    
+                <!-- Chữ "VÀ" kết nối ở giữa -->
+                <div class="couplet-connector">
+                    &
+                </div>
+    
+                <!-- Câu đối bên phải -->
+                <div class="couplet-column right">
+                    <div class="couplet-text">
+                        <span>Rượu</span>
+                        <span>hồng</span>
+                        <span>đượm</span>
+                        <span>tình</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Couple Names - VỚI FONT CHỮ ĐẸP -->
             <div class="couple-names">
-                <div class="name-card groom">{{ couple.groom }}</div>
-                <div class="heart-connector">💑</div>
-                <div class="name-card bride">{{ couple.bride }}</div>
+                <!-- Container hiệu ứng tuyết rơi -->
+                <div class="snow-container">
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                    <div class="snowflake"></div>
+                </div>
+    
+                <!-- Tên chú rể -->
+                <div class="name-card groom">
+                    <div class="flower-decoration">❀</div>
+                    <h2 class="elegant-text" data-text="Quang Gioóng">Quang Gioóng</h2>
+                </div>
+    
+                <!-- Trái tim -->
+                <div class="heart-icon">
+                    <svg viewBox="0 0 24 24" fill="#FF69B4">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+    
+                <!-- Tên cô dâu -->
+                <div class="name-card bride">
+                    <div class="flower-decoration">❀</div>
+                    <h2 class="elegant-text rose-gold" data-text="Chum Chum">Chum Chum</h2>
+                </div>
             </div>
 
             <!-- Main Photo & Poem -->
@@ -123,8 +193,7 @@
         
                     <!-- Địa điểm -->
                     <div class="thu-phap-row thu-phap-location">
-                        <div class="thu-phap-location-icon">📍</div>
-                        <div class="thu-phap-location-text">
+                        <div class="thu-phap-location-icon">
                             <p>{{ wedding_info.location }}</p>
                         </div>
                     </div>
@@ -228,36 +297,16 @@
                         <span class="family-title-separator">&</span>
                         <span class="family-title-text">HỌ NHÀ GÁI</span>
                     </h2>
-                    <div class="family-subtitle">Lưỡng Tộc Đăng Môn • Song Phương Hiệp Hỷ</div>
+                    <div class="family-subtitle">Lưỡng Tộc Đăng Môn
+                        <br>Song Phương Hiệp Hỷ</div>
                 </div>
     
                 <!-- Bảng gia tộc thư pháp - CĂN ĐỀU 2 CỘT -->
                 <div class="family-thu-phap-table">
-                    <!-- Hàng tiêu đề - CĂN ĐỀU -->
-                    <div class="family-table-row header-row">
-                        <div class="family-column groom-column">
-                            <div class="family-side-header">
-                                <h3 class="family-side-title">HỌ NHÀ TRAI</h3>
-                                <div class="family-sub">Tổ Tiên Phúc Ấm</div>
-                            </div>
-                        </div>
-            
-                        <div class="family-separator-column">
-                            <div class="vertical-separator"></div>
-                        </div>
-            
-                        <div class="family-column bride-column">
-                            <div class="family-side-header">
-                                <h3 class="family-side-title">HỌ NHÀ GÁI</h3>
-                                <div class="family-sub">Tông Môn Hiển Vinh</div>
-                            </div>
-                        </div>
-                    </div>
-        
                     <!-- Phụ Thân - CĂN ĐỀU -->
                     <div class="family-table-row">
-                        <div class="family-column groom-column">
-                            <div class="family-member-card father-card">
+                        <div class="family-column groom-column equal-height">
+                            <div class="family-member-card father-card equal-height">
                                 <div class="family-role">ÔNG</div>
                                 <div class="family-name thu-phap-name">{{ families.groom_family.father }}</div>
                                 <div class="family-decoration">🎋</div>
@@ -269,8 +318,8 @@
 
                         </div>
             
-                        <div class="family-column bride-column">
-                            <div class="family-member-card father-card">
+                        <div class="family-column bride-column equal-height">
+                            <div class="family-member-card father-card equal-height">
                                 <div class="family-role">ÔNG</div>
                                 <div class="family-name thu-phap-name">{{ families.bride_family.father }}</div>
                                 <div class="family-decoration">🎋</div>
@@ -280,8 +329,8 @@
         
                     <!-- Mẫu Thân - CĂN ĐỀU -->
                     <div class="family-table-row">
-                        <div class="family-column groom-column">
-                            <div class="family-member-card mother-card">
+                        <div class="family-column groom-column equal-height">
+                            <div class="family-member-card mother-card equal-height">
                                 <div class="family-role">BÀ</div>
                                 <div class="family-name thu-phap-name">{{ families.groom_family.mother }}</div>
                                 <div class="family-decoration">🌺</div>
@@ -292,8 +341,8 @@
                             <div class="vertical-separator"></div>
                         </div>
             
-                        <div class="family-column bride-column">
-                            <div class="family-member-card mother-card">
+                        <div class="family-column bride-column equal-height">
+                            <div class="family-member-card mother-card equal-height">
                                 <div class="family-role">BÀ</div>
                                 <div class="family-name thu-phap-name">{{ families.bride_family.mother }}</div>
                                 <div class="family-decoration">🌺</div>
@@ -301,44 +350,20 @@
                         </div>
                     </div>
         
-                    <!-- Chú Rể & Cô Dâu - CĂN ĐỀU -->
-                    <div class="family-table-row couple-row">
-                        <div class="family-column groom-column">
-                            <div class="family-member-card groom-card">
-                                <div class="family-role couple-role">CHÚ RỂ</div>
-                                <div class="couple-name thu-phap-couple">{{ couple.groom }}</div>
-                                <div class="couple-decoration">💙</div>
-                            </div>
-                        </div>
-            
-                        <div class="family-separator-column couple-separator">
-                            <div class="couple-text">
-                                <span class="couple-word">Song</span>
-                                <span class="couple-word">Tâm</span>
-                                <span class="couple-word">Hiệp</span>
-                                <span class="couple-word">Ý</span>
-                            </div>
-                        </div>
-            
-                        <div class="family-column bride-column">
-                            <div class="family-member-card bride-card">
-                                <div class="family-role couple-role">CÔ DÂU</div>
-                                <div class="couple-name thu-phap-couple">{{ couple.bride }}</div>
-                                <div class="couple-decoration">💖</div>
-                            </div>
-                        </div>
-                    </div>
+                    
         
                     <!-- Phong ấn gia tộc -->
                     <div class="family-seal">
                         <div class="seal-circle">
-                            <div class="seal-text">Phúc</div>
-                            <div class="seal-text">Lộc</div>
-                            <div class="seal-text">Thọ</div>
+                            <div class="seal-text">喜</div>
+                            <div class="seal-text"></div>
+                            <div class="seal-text">喜</div>
+                            
                         </div>
                         <div class="seal-center">
                             <div class="seal-heart">❤️</div>
-                            <div class="seal-inscription">Gia Tộc Viên Mãn</div>
+                            <div class="seal-inscription">Gia Tộc
+                                <br>Viên Mãn</div>
                         </div>
                     </div>
                 </div>
@@ -347,7 +372,10 @@
 
             <!-- Map & Address Section -->
             <section class="map-section">
-                <h2>ĐỊA CHỈ TIỆC CƯỚI</h2>
+                <h2 class="venue-title thu-phap-viet-nam">
+                    <span class="title-main">Địa điểm tổ chức</span>
+                    <span class="title-sub">tiệc cưới & lễ thành hôn</span>
+                </h2>
 
                 <div class="address-toggle">
                     <button id="btn-old-address" class="address-btn active" onclick="switchAddress('old')">
@@ -415,7 +443,7 @@
                 <div class="qr-grid">
                     <!-- Chú rể -->
                     <div class="qr-card groom">
-                        <h3><i class="fas fa-user-tie"></i> CHÚ RỂ</h3>
+                        <h3>CHÚ RỂ</h3>
                         <div class="qr-image-container">
                             <img src="{{ url_for('static', filename='images/' + bank_info.groom.qr_code) }}" alt="QR Chú rể" class="qr-image">
                         </div>
@@ -428,9 +456,6 @@
                             </div>
                             <div class="bank-account-with-copy" onclick="copyAccount('{{ bank_info.groom.account }}')">
                                 <div class="bank-account-number">{{ bank_info.groom.account }}</div>
-                                <div class="copy-tooltip">Nhấn để sao chép</div>
-                                <div class="copy-icon">
-                                    <i class="fas fa-copy"></i>
                                 </div>
                             </div>
                         </div>
@@ -438,7 +463,7 @@
                     
                     <!-- Cô dâu -->
                     <div class="qr-card bride">
-                        <h3><i class="fas fa-user-bride"></i> CÔ DÂU</h3>
+                        <h3>CÔ DÂU</h3>
                         <div class="qr-image-container">
                             <img src="{{ url_for('static', filename='images/' + bank_info.bride.qr_code) }}" alt="QR Cô dâu" class="qr-image">
                         </div>
@@ -451,9 +476,6 @@
                             </div>
                             <div class="bank-account-with-copy" onclick="copyAccount('{{ bank_info.bride.account }}')">
                                 <div class="bank-account-number">{{ bank_info.bride.account }}</div>
-                                <div class="copy-tooltip">Nhấn để sao chép</div>
-                                <div class="copy-icon">
-                                    <i class="fas fa-copy"></i>
                                 </div>
                             </div>
                         </div>
@@ -463,7 +485,10 @@
 
             <!-- Photo Album - HIỂN THỊ ĐẦY ĐỦ 10 ẢNH -->
             <section class="album-section">
-                <h2>ALBUM ẢNH CƯỚI</h2>
+                <div class="album-title romantic">
+                    <div class="decor-line"></div>
+                    <h2>ALBUM ẢNH CƯỚI</h2>
+                </div>
                 <div class="photo-counter">
                     <span id="current-photo">1</span> / <span id="total-photos">{{ photos|length }}</span>
                 </div>
@@ -482,12 +507,8 @@
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
-                
-                <!-- Carousel Controls -->
+                <!-- Carousel Controls (chỉ còn dots) -->
                 <div class="carousel-controls">
-                    <button class="carousel-control-btn" onclick="toggleCarousel()" id="carousel-toggle">
-                        <i class="fas fa-play"></i>
-                    </button>
                     <div id="carousel-dots" class="carousel-dots">
                         <!-- Dots sẽ được tạo bằng JavaScript -->
                     </div>
@@ -496,7 +517,10 @@
 
             <!-- Thank You Section -->
             <section class="thank-you-section">
-                <h2>LỜI CẢM ƠN</h2>
+                <div class="album-title">
+                    <div class="decor-line"></div>
+                    <h2>Lời cảm ơn</h2>
+                </div>
                 <div class="thank-you-message">
                     <p>Chúng tôi xin chân thành cảm ơn tình cảm quý báu của quý vị đã dành cho gia đình chúng tôi.</p>
                     <p>Sự hiện diện của quý vị là niềm vinh hạnh lớn lao và là món quà ý nghĩa nhất trong ngày trọng đại của chúng tôi.</p>
@@ -507,7 +531,9 @@
 
             <!-- Contact Section -->
             <section class="contact-section">
-                <h2>LIÊN HỆ</h2>
+                <div class="album-title vintage">
+                    <h2>Liên hệ</h2>
+                </div>
                 <div class="contact-grid">
                     <div class="contact-card">
                         <h3><i class="fas fa-user-tie"></i> CHÚ RỂ</h3>
@@ -528,7 +554,10 @@
 
             <!-- Share Section -->
             <section class="share-section">
-                <h2>CHIA SẺ HẠNH PHÚC</h2>
+                <!-- Option 3: Kiểu modern -->
+                <div>
+                    <h2>Chia sẻ hạnh phúc</h2>
+                </div>
                 <div class="share-buttons">
                     <button class="share-btn facebook" onclick="shareOnFacebook()">
                         <i class="fab fa-facebook"></i> Facebook
